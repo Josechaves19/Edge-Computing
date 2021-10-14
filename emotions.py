@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
-import tensorflow as tf
+import datetime
+import time
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Flatten
 from tensorflow.keras.layers import Conv2D
@@ -8,7 +9,7 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.layers import MaxPooling2D
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-# Creación del modelo
+# Creción del modelo
 model = Sequential()
 
 model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(48,48,1)))
@@ -27,6 +28,7 @@ model.add(Dense(1024, activation='relu'))
 model.add(Dropout(0.5))
 model.add(Dense(7, activation='softmax'))
 
+
 # Emotions will be displayed on your face from the webcam feed
 model.load_weights('model.h5')
 
@@ -38,7 +40,7 @@ emotion_dict = {0: "Enojado", 1: "Disgustado", 2: "Temeroso", 3: "Feliz", 4: "Ne
 
 # start the webcam feed
 cap = cv2.VideoCapture(0)
-Emotions_File = open("Emotions_File.txt", "a") # Abre archivo de texto
+Emotions_File = open("Emotions_File.csv", "a") # Abre archivo de texto
 while True:
     # Find haar cascade to draw bounding box around face
     ret, frame = cap.read()
@@ -56,13 +58,20 @@ while True:
         maxindex = int(np.argmax(prediction))
         cv2.putText(frame, emotion_dict[maxindex], (x+20, y-60), cv2.FONT_HERSHEY_SIMPLEX, 1, (200, 0, 0), 2, cv2.LINE_AA) # Texto de la emoción
 
+        # ct stores current time
+        ct = datetime.datetime.now()
+
+        # ts store timestamp of current time
+        ts = time.time()
+        
         emocion = emotion_dict[maxindex]
-        Emotions_File.write(str((emocion))+"\n") # Guardar las emociones en un .txt
+        # print("Emoción: ", emocion,",Datetime:", ct,",Timestamp:", ts)
+        Emotions_File.write(str((emocion))+";"+str(ct)+";"+str(ts)+"\n") # Guardar las emociones en un .txt
     
     cv2.imshow('Video', cv2.resize(frame,(800,480),interpolation = cv2.INTER_CUBIC)) # Ventana de video
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-
+    
 Emotions_File.close() # Cierra archivo de texto
 cap.release()
 cv2.destroyAllWindows()
