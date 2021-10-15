@@ -10,8 +10,8 @@ Para el funcionamiento de la detección de emociones se hace uso de un modelo pr
 correspondiente al archivo "model_optimized.tflite".
 
 Para ejecutar el programa es necesario abrir el archivo emotions.py y tener una cámara disponible para poder realizar la
-detección. Con esto definido, solo se debe ejecutar dicho archivo para llevar a cabo el programa.
-
+detección. Con esto definido, solo se debe ejecutar dicho archivo para llevar a cabo el programa y obtener un archivo excel 
+donde se registran las emociones obtenidas y su tiempo de obtención, esto para su posterior análisis y procesamiento.
 
 - emotions.py: archivo principal para la ejecución del reconocimiento de emociones 
 donde este realiza el llamado a los otros 2 archivos incorporados en el repositorio
