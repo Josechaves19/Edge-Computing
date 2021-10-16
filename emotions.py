@@ -1,77 +1,90 @@
+import cv2 
+import tensorflow as tf
 import numpy as np
-import cv2
 import datetime
 import time
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, Flatten
-from tensorflow.keras.layers import Conv2D
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.layers import MaxPooling2D
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from skimage.transform import resize
 
-# Creción del modelo
-model = Sequential()
+def crop_center(img, x, y, w, h):    
+    return img[y:y+h,x:x+w]
 
-model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(48,48,1)))
-model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
+def preprocess_img(raw):
+    img = resize(raw,(200,200, 3))
+    img = np.expand_dims(img,axis=0)
+    if(np.max(img)>1):
+        img = img/255.0
+    return img
 
-model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
+def brain(raw, x, y, w, h):
+    ano = ''
+    img = crop_center(raw, x, y , w , h)
+    img = preprocess_img(img)
+    f.set_tensor(i['index'], img.astype(np.float32))
+    f.invoke()
+    res = f.get_tensor(o['index'])
+    classes = np.argmax(res,axis=1)
+    if classes == 0:
+        ano = 'Enojado'
+    elif classes == 1:
+        ano = 'Disgustado'
+    elif classes == 2:
+        ano = 'Temeroso'
+    elif classes == 3:
+        ano = "Feliz"
+    elif classes == 4:
+        ano = "Neutral"
+    elif classes == 5:
+        ano = 'Triste'
+    else :
+        ano = 'Sorprendido'
+    return ano
+    
+print('Cargando ...')
+f = tf.lite.Interpreter("model_optimized.tflite")
+f.allocate_tensors()
+i = f.get_input_details()[0]
+o = f.get_output_details()[0]
+print('Carga Éxitosa')
 
-model.add(Flatten())
-model.add(Dense(1024, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(7, activation='softmax'))
+cascPath = "haarcascade_frontalface_default.xml"
+faceCascade = cv2.CascadeClassifier(cascPath)
 
-
-# Emotions will be displayed on your face from the webcam feed
-model.load_weights('model.h5')
-
-# prevents openCL usage and unnecessary logging messages
-cv2.ocl.setUseOpenCL(False)
-
-# dictionary which assigns each label an emotion (alphabetical order)
-emotion_dict = {0: "Enojado", 1: "Disgustado", 2: "Temeroso", 3: "Feliz", 4: "Neutral", 5: "Triste", 6: "Sorprendido"}
-
-# start the webcam feed
 cap = cv2.VideoCapture(0)
+ai = ''
+img = np.zeros((200, 200, 3))
+ct = 0
 Emotions_File = open("Emotions_File.csv", "a") # Abre archivo de texto
-while True:
-    # Find haar cascade to draw bounding box around face
+
+while(True):
+    # Capture frame-by-frame
     ret, frame = cap.read()
-    if not ret:
-        break
-    facecasc = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+    ct+=1
+    # Our operations on the frame come here
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    faces = facecasc.detectMultiScale(gray,scaleFactor=1.3, minNeighbors=5)
+
+    # Detect faces in the image
+    faces = faceCascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(150, 150))
     
+    ano = ''    
     for (x, y, w, h) in faces:
-        cv2.rectangle(frame, (x, y-50), (x+w, y+h+10), (255, 255, 0), 2)
-        roi_gray = gray[y:y + h, x:x + w]
-        cropped_img = np.expand_dims(np.expand_dims(cv2.resize(roi_gray, (48, 48)), -1), 0)
-        prediction = model.predict(cropped_img)
-        maxindex = int(np.argmax(prediction))
-        cv2.putText(frame, emotion_dict[maxindex], (x+20, y-60), cv2.FONT_HERSHEY_SIMPLEX, 1, (200, 0, 0), 2, cv2.LINE_AA) # Texto de la emoción
-
-        # ct stores current time
-        ct = datetime.datetime.now()
-
-        # ts store timestamp of current time
-        ts = time.time()
-        
-        emocion = emotion_dict[maxindex]
-        # print("Emoción: ", emocion,",Datetime:", ct,",Timestamp:", ts)
-        Emotions_File.write(str((emocion))+";"+str(ct)+";"+str(ts)+"\n") # Guardar las emociones en un .txt
-    
-    cv2.imshow('Video', cv2.resize(frame,(800,480),interpolation = cv2.INTER_CUBIC)) # Ventana de video
+        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        cv2.putText(frame, ai, (x, y-5), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2, cv2.LINE_AA)
+        if ct > 3:
+            ai = brain(gray, x, y, w, h)
+            ct = 0
+    # ************************ Se agrega la información al archivo .csv ********************************** #
+    emocion = ai
+    Emotions_File.write(str((emocion))+"\n") # Guardar las emociones en un .csv
+    tc = datetime.datetime.now()
+    ts = time.time()
+    Emotions_File.write(str((emocion))+";"+str(tc)+";"+str(ts)+"\n") # Guardar las emociones en un .csv
+    # **************************************************************************************************** #
+    cv2.imshow('frame',frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-    
+
 Emotions_File.close() # Cierra archivo de texto
 cap.release()
 cv2.destroyAllWindows()
+
+
