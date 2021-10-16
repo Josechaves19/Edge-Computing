@@ -20,4 +20,4 @@ donde se registran las emociones obtenidas y su tiempo de obtención, esto para 
 - haarcascade_frontalface_default.xml: archivo clasificador necesario para la ejecución del programa.
 
 El código fuente es obtenido de:
-A. Balaji, "Emotion-detection", 2021. [Online]. Disponible en: \url{https://github.com/atulapra/Emotion-detection}
+A. Balaji, "Emotion-detection", 2021. [Online]. Disponible en: https://github.com/atulapra/Emotion-detection
