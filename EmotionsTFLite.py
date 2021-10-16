@@ -10,7 +10,6 @@ Interpreter.allocate_tensors()
 input_details=Interpreter.get_input_details()
 output_details=Interpreter.get_output_details()
 
-
 # prevents openCL usage and unnecessary logging messages
 cv2.ocl.setUseOpenCL(False)
 
@@ -19,7 +18,7 @@ emotion_dict = {0: "Enojado", 1: "Disgustado", 2: "Temeroso", 3: "Feliz", 4: "Ne
 
 # start the webcam feed
 cap = cv2.VideoCapture(0)
-Emotions_File = open("Emotions_File.csv", "a") # Abre archivo de texto
+Emotions_File = open("Emotions_File.csv", "a") # Abre archivo .csv
 while True:
     # Find haar cascade to draw bounding box around face
     ret, frame = cap.read()
@@ -40,21 +39,18 @@ while True:
         maxindex = int(np.argmax(output_data))
         cv2.putText(frame, emotion_dict[maxindex], (x+20, y-60), cv2.FONT_HERSHEY_SIMPLEX, 1, (200, 0, 0), 2, cv2.LINE_AA) # Texto de la emoción
 
-        # ct stores current time
-        ct = datetime.datetime.now()
-
-        # ts store timestamp of current time
-        ts = time.time()
-        
+        # ************************ Se agrega la información al archivo .csv ********************************** #
         emocion = emotion_dict[maxindex]
-        # print("Emoción: ", emocion,",Datetime:", ct,",Timestamp:", ts)
+        tc = datetime.datetime.now()        # tc stores current time
+        ts = time.time()                    # ts store timestamp of current time
         if ts % 5 <0.1:
-            Emotions_File.write(str((emocion))+";"+str(ct)+";"+str(ts)+"\n") # Guardar las emociones en un .txt
-            
+            Emotions_File.write(str((emocion))+";"+str(tc)+";"+str(ts)+"\n") # Guardar las emociones en un .csv
+        # **************************************************************************************************** #
+
     cv2.imshow('Video', cv2.resize(frame,(800,480),interpolation = cv2.INTER_CUBIC)) # Ventana de video
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
     
-Emotions_File.close() # Cierra archivo de texto
+Emotions_File.close() # Cierra archivo de .csv
 cap.release()
 cv2.destroyAllWindows()
