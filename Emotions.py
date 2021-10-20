@@ -41,10 +41,9 @@ while True:
 
         # ************************ Se agrega la información al archivo .csv ********************************** #
         emocion = emotion_dict[maxindex]
-        tc = datetime.datetime.now()        # tc stores current time
-        ts = time.time()                    # ts store timestamp of current time
-        if ts % 5 <0.1:
-            Emotions_File.write(str((emocion))+";"+str(tc)+";"+str(ts)+"\n") # Guardar las emociones en un .csv
+        tc = datetime.datetime.now()        # tc contiene el tiempo actual (hora y fecha)
+        ts = time.time()                    # ts contiene el tiempo actual (segundos desde el epoch)
+        Emotions_File.write(str((emocion))+";"+str(tc)+";"+str(ts)+"\n") # Guardar las emociones en un .csv
         # **************************************************************************************************** #
 
     cv2.imshow('Video', cv2.resize(frame,(800,480),interpolation = cv2.INTER_CUBIC)) # Ventana de video
