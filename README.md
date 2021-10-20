@@ -12,7 +12,7 @@ Para ejecutar el programa es necesario abrir el archivo Emotions.py y tener una 
 detección. Con esto definido, solo se debe ejecutar dicho archivo para llevar a cabo el programa y obtener un archivo excel 
 donde se registran las emociones obtenidas y su tiempo de obtención, esto para su posterior análisis y procesamiento.
 
-- EmotionTFlite.py: archivo principal para la ejecución del reconocimiento de emociones donde este realiza el llamado a los 
+- Emotions.py: archivo principal para la ejecución del reconocimiento de emociones donde este realiza el llamado a los 
   otros 2 archivos incorporados en el repositorio
   
 - Conversion.py: archivo para realizar la conversión de un modelo preentrenado a un modelo que utilice tensorflow lite.
@@ -36,5 +36,5 @@ Una vez realizado esto, se cocina la imagen en la tarjeta SD para la integració
 
 Con esto, ya se puede probar el código dentro de la Raspberry Pi 2
 
-El código fuente es obtenido de:
+El código fuente para el reconocimineto de emociones es obtenido de:
 A. Balaji, "Emotion-detection", 2021. [Online]. Disponible en: https://github.com/atulapra/Emotion-detection
