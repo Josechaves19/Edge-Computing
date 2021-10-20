@@ -43,7 +43,7 @@ while True:
         emocion = emotion_dict[maxindex]
         tc = datetime.datetime.now()        # tc contiene el tiempo actual (hora y fecha)
         ts = time.time()                    # ts contiene el tiempo actual (segundos desde el epoch)
-        Emotions_File.write(str((emocion))+";"+str(tc)+";"+str(ts)+"\n") # Guardar las emociones en un .csv
+        Emotions_File.write(str((emocion))+";"+str(tc)+";"+str(ts)+"\n") # Guardar las emociones en un .csv con el formato "Emoción; fecha y hora; segundos".
         # **************************************************************************************************** #
 
     cv2.imshow('Video', cv2.resize(frame,(800,480),interpolation = cv2.INTER_CUBIC)) # Ventana de video
