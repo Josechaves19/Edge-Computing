@@ -13,13 +13,13 @@ detección. Con esto definido, solo se debe ejecutar dicho archivo para llevar a
 donde se registran las emociones obtenidas y su tiempo de obtención, esto para su posterior análisis y procesamiento.
 
 - Emotions.py: archivo principal para la ejecución del reconocimiento de emociones donde este realiza el llamado a los 
-  otros 2 archivos incorporados en el repositorio
+  otros 2 archivos incorporados en el repositorio.
   
 - Conversion.py: archivo para realizar la conversión de un modelo preentrenado a un modelo que utilice tensorflow lite.
 
 - model.h5: Modelo preentrenado para el reconocimiento de emociones. A este archivo se le realiza la conversión a .tflite.
 
-- model.tflite: Modelo preentrenado convertido en .tflite y optimizado para su ejecución
+- model.tflite: Modelo preentrenado convertido en .tflite y optimizado para su ejecución.
 
 - haarcascade_frontalface_default.xml: archivo clasificador necesario para la ejecución del programa.
 
@@ -30,11 +30,11 @@ integrada las capas y las modificaciones necesarias en la recetas se utiliza 2 c
 - time bitbake core-image-sato
 
 Una vez realizado esto, se cocina la imagen en la tarjeta SD para la integración en la Raspberry, donde se debe ubicar el archivo
-.rpi-sdimg, el cual se encuentra en la dirección /build/tmp/deploy/images/raspberrypi3/. Una vez localizado, se realiza el siguiente comando:
+.rpi-sdimg, el cual se encuentra en la dirección /build/tmp/deploy/images/raspberrypi2/. Una vez localizado, se realiza el siguiente comando:
 
-- sudo dd if=./core-image-sato-raspberrypi3.rpi-sdimg of=/dev/sdb
+- sudo dd if=./core-image-sato-raspberrypi2.rpi-sdimg of=/dev/sdb
 
-Con esto, ya se puede probar el código dentro de la Raspberry Pi 2
+Con esto, ya se puede probar el código dentro de la Raspberry Pi 2.
 
 El código fuente para el reconocimineto de emociones es obtenido de:
 A. Balaji, "Emotion-detection", 2021. [Online]. Disponible en: https://github.com/atulapra/Emotion-detection
